@@ -40,7 +40,7 @@ def batch_test_proxies(proxies, urls):
 
 # 代理列表 [(代理IP地址, 代理端口, 用户名, 密码)]
 proxies = [
-    ("91.185.190.159", 42974, "leung0108", "admin")
+    ("", , "", "")
     #("192.168.1.102", 1080, "user2", "password2"),
     # 添加更多代理...
 ]
