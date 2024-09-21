@@ -42,17 +42,16 @@ def batch_test_proxies(proxies, urls):
     return results
 
 # 从文件中读取代理信息并解析
-def load_proxies_from_file(file_path):
+def load_proxies_from_variable(proxy_data):
     proxies = []
-    with open(file_path, 'r') as file:
-        for line in file:
-            line = line.strip()  # 移除换行符和多余的空白
-            if line:  # 忽略空行
-                # 解析代理信息
-                user_pass, ip_port = line.split('@')
-                username, password = user_pass.split(':')
-                ip, port = ip_port.split(':')
-                proxies.append((ip, int(port), username, password))
+    for line in proxy_data:
+        line = line.strip()  # 移除换行符和多余的空白
+        if line:  # 忽略空行
+            # 解析代理信息
+            user_pass, ip_port = line.split('@')
+            username, password = user_pass.split(':')
+            ip, port = ip_port.split(':')
+            proxies.append((ip, int(port), username, password))
     return proxies
 
 # 测试的URL列表
@@ -61,7 +60,7 @@ urls = [
 ]
 
 # 从文件中加载代理
-proxy_file_path = PROXYIP  # 假设代理信息存储在 proxies.txt 文件中
+proxy_data = PROXYIP  # 假设代理信息存储在 proxies.txt 文件中
 proxies = load_proxies_from_file(proxy_file_path)
 
 # 执行批量测试
