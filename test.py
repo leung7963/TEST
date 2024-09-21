@@ -54,7 +54,7 @@ def load_proxies_from_variable(proxy_data):
     return proxies
 
 # 代理数据存储在变量中，每行为 "用户名:密码@IP:端口"
-proxy_data = os.environ.get("PROXY_DATA", "")
+proxy_data = os.environ.get("PROXYIP", "")
 
 # 测试的URL列表
 urls = [
