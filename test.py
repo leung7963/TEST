@@ -28,8 +28,8 @@ def test_socks5_latency(proxy, url):
 
 def trigger_github_action():
     github_token = os.environ.get("GITHUB_TOKEN")  # 从环境变量中获取 GitHub token
-    repo = "username/repo"  # 替换为要触发的 GitHub 仓库
-    workflow_id = "workflow.yml"  # 替换为要触发的工作流 ID 或文件名
+    repo = "leung7963/socks5-hysteria2-for-Serv00-CT8"  # 替换为要触发的 GitHub 仓库
+    workflow_id = "check_cron.yaml"  # 替换为要触发的工作流 ID 或文件名
     api_url = f"https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/dispatches"
     
     headers = {
