@@ -60,17 +60,26 @@ def trigger_github_action():
 
 
 def batch_test_proxies(proxies, urls):
+    failed_proxies = False  # 标志位，跟踪是否有失败的代理
+    
     for proxy in proxies:
         for url in urls:
             latency = test_socks5_latency(proxy, url)
             
             proxy_ip, proxy_port = proxy[:2]  # 只获取IP和端口
             
-            if latency is None:  # 如果代理连接失败，触发 GitHub Action
-                print(f"Proxy {proxy_ip}:{proxy_port} failed. Triggering GitHub Action.")
-                trigger_github_action()
+            if latency is None:  # 如果代理连接失败
+                print(f"Proxy {proxy_ip}:{proxy_port} failed.")
+                failed_proxies = True  # 设置标志位为 True
             else:
                 print(f"Proxy {proxy_ip}:{proxy_port} -> {url} Latency: {latency:.2f} ms")
+    
+    # 所有代理测试完成后，如果有失败项，触发 GitHub Action
+    if failed_proxies:
+        print("Some proxies failed. Triggering GitHub Action.")
+        trigger_github_action()
+    else:
+        print("All proxies succeeded. No need to trigger GitHub Action.")
 
 # 从环境变量中读取代理信息并解析
 def load_proxies_from_env():
