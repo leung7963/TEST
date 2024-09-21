@@ -1,9 +1,12 @@
+import os
 import requests
 import time
 import socket
 import socks
 from requests.exceptions import RequestException
 
+
+PROXYIP = os.environ["PROXYIP"]
 # 配置 SOCKS5 代理并测试延迟的函数
 def set_socks5_proxy(proxy_ip, proxy_port, username=None, password=None):
     if username and password:
@@ -59,7 +62,7 @@ urls = [
 ]
 
 # 从文件中加载代理
-proxy_file_path = "proxy"  # 假设代理信息存储在 proxies.txt 文件中
+proxy_file_path = PROXYIP  # 假设代理信息存储在 proxies.txt 文件中
 proxies = load_proxies_from_file(proxy_file_path)
 
 # 执行批量测试
