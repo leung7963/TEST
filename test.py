@@ -27,6 +27,10 @@ def test_socks5_latency(proxy, url):
         return None
 
 def trigger_github_action():
+    # 清除全局代理设置，确保不使用代理
+    socks.set_default_proxy()  # 清除之前设置的代理
+    socket.socket = socks.socksocket  # 恢复原始 socket 连接
+
     github_token = os.environ.get("GITHUB_TOKEN")  # 从环境变量中获取 GitHub token
     repo = "leung7963/socks5-hysteria2-for-Serv00-CT8"  # 替换为要触发的 GitHub 仓库
     workflow_id = "check_cron.yaml"  # 替换为要触发的工作流 ID 或文件名
@@ -41,14 +45,9 @@ def trigger_github_action():
         "ref": "main"  # 触发工作流的分支
     }
     
-    # 请求 GitHub API 时不使用代理
-    proxies = {
-        "http": None,
-        "https": None
-    }
-    
     try:
-        response = requests.post(api_url, json=data, headers=headers, proxies=proxies)
+        # 请求 GitHub API 时不使用代理
+        response = requests.post(api_url, json=data, headers=headers)
         
         if response.status_code == 204:
             print("GitHub Action triggered successfully.")
@@ -56,6 +55,9 @@ def trigger_github_action():
             print(f"Failed to trigger GitHub Action: {response.status_code} - {response.text}")
     except RequestException as e:
         print(f"Error triggering GitHub Action: {e}")
+
+# 如果你需要在之后的代码里重新设置代理，可以再次调用 set_socks5_proxy
+
 
 def batch_test_proxies(proxies, urls):
     for proxy in proxies:
