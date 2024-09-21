@@ -38,18 +38,29 @@ def batch_test_proxies(proxies, urls):
             results.append({"proxy": proxy, "url": url, "latency": latency})
     return results
 
-# 代理列表 [(代理IP地址, 代理端口, 用户名, 密码)]
-proxies = [
-    ("", , "", "")
-    #("192.168.1.102", 1080, "user2", "password2"),
-    # 添加更多代理...
-]
+# 从文件中读取代理信息并解析
+def load_proxies_from_file(file_path):
+    proxies = []
+    with open(file_path, 'r') as file:
+        for line in file:
+            line = line.strip()  # 移除换行符和多余的空白
+            if line:  # 忽略空行
+                # 解析代理信息
+                user_pass, ip_port = line.split('@')
+                username, password = user_pass.split(':')
+                ip, port = ip_port.split(':')
+                proxies.append((ip, int(port), username, password))
+    return proxies
 
 # 测试的URL列表
 urls = [
-    "http://www.apple.com/library/test/success.html"
-    # 添加更多测试地址...
+    "https://www.google.com",
+    "https://www.github.com",
 ]
+
+# 从文件中加载代理
+proxy_file_path = "proxy"  # 假设代理信息存储在 proxies.txt 文件中
+proxies = load_proxies_from_file(proxy_file_path)
 
 # 执行批量测试
 results = batch_test_proxies(proxies, urls)
