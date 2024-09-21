@@ -1,6 +1,8 @@
 name: Test SOCKS5 Proxies
 
 on:
+  schedule:
+    - cron: '*/30 * * * *'
   push:
     branches:
       - main
