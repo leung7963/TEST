@@ -28,8 +28,8 @@ def test_socks5_latency(proxy, url):
 
 def trigger_github_action():
     github_token = os.environ.get("GITHUB_TOKEN")  # 从环境变量中获取 GitHub token
-    repo = "leung7963/socks5-hysteria2-for-Serv00-CT8"  # 替换为要触发的 GitHub 仓库
-    workflow_id = "check_cron.yaml"  # 替换为要触发的工作流 ID 或文件名
+    repo = "username/repo"  # 替换为要触发的 GitHub 仓库
+    workflow_id = "workflow.yml"  # 替换为要触发的工作流 ID 或文件名
     api_url = f"https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/dispatches"
     
     headers = {
@@ -41,12 +41,21 @@ def trigger_github_action():
         "ref": "main"  # 触发工作流的分支
     }
     
-    response = requests.post(api_url, json=data, headers=headers)
+    # 请求 GitHub API 时不使用代理
+    proxies = {
+        "http": None,
+        "https": None
+    }
     
-    if response.status_code == 204:
-        print("GitHub Action triggered successfully.")
-    else:
-        print(f"Failed to trigger GitHub Action: {response.status_code} - {response.text}")
+    try:
+        response = requests.post(api_url, json=data, headers=headers, proxies=proxies)
+        
+        if response.status_code == 204:
+            print("GitHub Action triggered successfully.")
+        else:
+            print(f"Failed to trigger GitHub Action: {response.status_code} - {response.text}")
+    except RequestException as e:
+        print(f"Error triggering GitHub Action: {e}")
 
 def batch_test_proxies(proxies, urls):
     for proxy in proxies:
