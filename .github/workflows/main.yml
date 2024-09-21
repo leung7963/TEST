@@ -25,7 +25,7 @@ jobs:
 
     - name: Run proxy test
       env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        GITHUB_TOKEN: ${{ secrets.TOKEN}}
         PROXY_DATA: ${{ secrets.PROXY_DATA }}
       run: |
         python test.py
