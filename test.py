@@ -58,8 +58,7 @@ def load_proxies_from_env():
 
 # 测试的URL列表
 urls = [
-    "https://www.google.com",
-    "https://www.github.com",
+    "http://www.apple.com/library/test/success.html"
 ]
 
 # 从环境变量中加载代理
