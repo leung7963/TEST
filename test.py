@@ -6,7 +6,6 @@ import socks
 from requests.exceptions import RequestException
 
 
-PROXYIP = os.environ["PROXYIP"]
 # 配置 SOCKS5 代理并测试延迟的函数
 def set_socks5_proxy(proxy_ip, proxy_port, username=None, password=None):
     if username and password:
@@ -55,7 +54,7 @@ def load_proxies_from_variable(proxy_data):
     return proxies
 
 # 代理数据存储在变量中，每行为 "用户名:密码@IP:端口"
-proxy_data = PROXYIP
+proxy_data = os.environ.get("PROXY_DATA", "")
 
 # 测试的URL列表
 urls = [
