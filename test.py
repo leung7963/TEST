@@ -8,20 +8,15 @@ from requests.exceptions import RequestException
 # 配置 SOCKS5 代理并测试延迟的函数
 def set_socks5_proxy(proxy_ip, proxy_port, username=None, password=None):
     if username and password:
-        # 使用用户名和密码进行 SOCKS5 验证
         socks.set_default_proxy(socks.SOCKS5, proxy_ip, proxy_port, username=username, password=password)
     else:
-        # 不使用认证的 SOCKS5 代理
         socks.set_default_proxy(socks.SOCKS5, proxy_ip, proxy_port)
     socket.socket = socks.socksocket
 
 def test_socks5_latency(proxy, url):
     proxy_ip, proxy_port, username, password = proxy
     try:
-        # 设置代理
         set_socks5_proxy(proxy_ip, proxy_port, username, password)
-        
-        # 测试延迟
         start_time = time.time()
         response = requests.get(url, timeout=10)
         latency = (time.time() - start_time) * 1000  # 转换为毫秒
@@ -31,13 +26,40 @@ def test_socks5_latency(proxy, url):
         print(f"Proxy {proxy_ip}:{proxy_port} -> {url}: Error: {e}")
         return None
 
+def trigger_github_action():
+    github_token = os.environ.get("GITHUB_TOKEN")  # 从环境变量中获取 GitHub token
+    repo = "username/repo"  # 替换为要触发的 GitHub 仓库
+    workflow_id = "workflow.yml"  # 替换为要触发的工作流 ID 或文件名
+    api_url = f"https://api.github.com/repos/{repo}/actions/workflows/{workflow_id}/dispatches"
+    
+    headers = {
+        "Authorization": f"token {github_token}",
+        "Accept": "application/vnd.github.v3+json"
+    }
+    
+    data = {
+        "ref": "main"  # 触发工作流的分支
+    }
+    
+    response = requests.post(api_url, json=data, headers=headers)
+    
+    if response.status_code == 204:
+        print("GitHub Action triggered successfully.")
+    else:
+        print(f"Failed to trigger GitHub Action: {response.status_code} - {response.text}")
+
 def batch_test_proxies(proxies, urls):
-    results = []
     for proxy in proxies:
         for url in urls:
             latency = test_socks5_latency(proxy, url)
-            results.append({"proxy": proxy, "url": url, "latency": latency})
-    return results
+            
+            proxy_ip, proxy_port = proxy[:2]  # 只获取IP和端口
+            
+            if latency is None:  # 如果代理连接失败，触发 GitHub Action
+                print(f"Proxy {proxy_ip}:{proxy_port} failed. Triggering GitHub Action.")
+                trigger_github_action()
+            else:
+                print(f"Proxy {proxy_ip}:{proxy_port} -> {url} Latency: {latency:.2f} ms")
 
 # 从环境变量中读取代理信息并解析
 def load_proxies_from_env():
@@ -45,9 +67,8 @@ def load_proxies_from_env():
     proxies = []
     for line in proxy_data.splitlines():
         line = line.strip()  # 移除换行符和多余的空白
-        if line:  # 忽略空行
+        if line:
             try:
-                # 解析代理信息
                 user_pass, ip_port = line.split('@')
                 username, password = user_pass.split(':')
                 ip, port = ip_port.split(':')
@@ -65,10 +86,4 @@ urls = [
 proxies = load_proxies_from_env()
 
 # 执行批量测试
-results = batch_test_proxies(proxies, urls)
-
-# 打印结果
-for result in results:
-    proxy_ip, proxy_port = result["proxy"][:2]  # 只获取IP和端口
-    latency = result["latency"]
-    print(f"Proxy {proxy_ip}:{proxy_port} -> {result['url']} Latency: {latency:.2f} ms" if latency else f"Proxy {proxy_ip}:{proxy_port} -> {result['url']} Failed")
+batch_test_proxies(proxies, urls)
