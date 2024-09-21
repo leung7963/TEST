@@ -57,8 +57,7 @@ def load_proxies_from_file(file_path):
 
 # 测试的URL列表
 urls = [
-    "https://www.google.com",
-    "https://www.github.com",
+    "https://www.apple.com/library/test/success.html"
 ]
 
 # 从文件中加载代理
