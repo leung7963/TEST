@@ -1,10 +1,9 @@
-import os
 import requests
 import time
 import socket
 import socks
+import os
 from requests.exceptions import RequestException
-
 
 # 配置 SOCKS5 代理并测试延迟的函数
 def set_socks5_proxy(proxy_ip, proxy_port, username=None, password=None):
@@ -40,21 +39,22 @@ def batch_test_proxies(proxies, urls):
             results.append({"proxy": proxy, "url": url, "latency": latency})
     return results
 
-# 从变量中读取代理信息并解析
-def load_proxies_from_variable(proxy_data):
+# 从环境变量中读取代理信息并解析
+def load_proxies_from_env():
+    proxy_data = os.environ.get("PROXY_DATA", "")
     proxies = []
-    for line in proxy_data:
+    for line in proxy_data.splitlines():
         line = line.strip()  # 移除换行符和多余的空白
         if line:  # 忽略空行
-            # 解析代理信息
-            user_pass, ip_port = line.split('@')
-            username, password = user_pass.split(':')
-            ip, port = ip_port.split(':')
-            proxies.append((ip, int(port), username, password))
+            try:
+                # 解析代理信息
+                user_pass, ip_port = line.split('@')
+                username, password = user_pass.split(':')
+                ip, port = ip_port.split(':')
+                proxies.append((ip, int(port), username, password))
+            except ValueError:
+                print(f"Skipping invalid proxy entry: {line}")
     return proxies
-
-# 代理数据存储在变量中，每行为 "用户名:密码@IP:端口"
-proxy_data = os.environ.get("PROXYIP", "")
 
 # 测试的URL列表
 urls = [
@@ -62,8 +62,8 @@ urls = [
     "https://www.github.com",
 ]
 
-# 从变量中加载代理
-proxies = load_proxies_from_variable(proxy_data)
+# 从环境变量中加载代理
+proxies = load_proxies_from_env()
 
 # 执行批量测试
 results = batch_test_proxies(proxies, urls)
