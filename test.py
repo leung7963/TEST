@@ -61,7 +61,7 @@ urls = [
 
 # 从文件中加载代理
 proxy_data = PROXYIP  # 假设代理信息存储在 proxies.txt 文件中
-proxies = load_proxies_from_file(proxy_file_path)
+proxies = load_proxies_from_variable(proxy_data)
 
 # 执行批量测试
 results = batch_test_proxies(proxies, urls)
