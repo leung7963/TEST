@@ -27,4 +27,4 @@ jobs:
       env:
         PROXY_DATA: ${{ secrets.PROXY_DATA }}
       run: |
-        python test_proxies.py
+        python test.py
