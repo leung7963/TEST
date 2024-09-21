@@ -41,7 +41,7 @@ def batch_test_proxies(proxies, urls):
             results.append({"proxy": proxy, "url": url, "latency": latency})
     return results
 
-# 从文件中读取代理信息并解析
+# 从变量中读取代理信息并解析
 def load_proxies_from_variable(proxy_data):
     proxies = []
     for line in proxy_data:
@@ -54,13 +54,16 @@ def load_proxies_from_variable(proxy_data):
             proxies.append((ip, int(port), username, password))
     return proxies
 
+# 代理数据存储在变量中，每行为 "用户名:密码@IP:端口"
+proxy_data = PROXYIP
+
 # 测试的URL列表
 urls = [
-    "https://www.apple.com/library/test/success.html"
+    "https://www.google.com",
+    "https://www.github.com",
 ]
 
-# 从文件中加载代理
-proxy_data = PROXYIP  # 假设代理信息存储在 proxies.txt 文件中
+# 从变量中加载代理
 proxies = load_proxies_from_variable(proxy_data)
 
 # 执行批量测试
