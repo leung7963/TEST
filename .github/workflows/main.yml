@@ -29,6 +29,8 @@ jobs:
 
     # 运行 SOCKS5 代理延迟测试脚本
     - name: Run SOCKS5 proxy latency test
+      env:
+        PROXYIP: ${{ secrets.PROXYIP }}
       run: python test.py
 
     # 如果脚本失败，触发 GitHub Actions 任务失败
