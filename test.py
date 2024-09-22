@@ -46,7 +46,18 @@ def trigger_github_action():
         print(f"Error triggering GitHub Action: {e}")
 
 # 如果你需要在之后的代码里重新设置代理，可以再次调用 set_socks5_proxy
-
+def test_socks5_latency(proxy, url):
+    proxy_ip, proxy_port, username, password = proxy
+    try:
+        set_socks5_proxy(proxy_ip, proxy_port, username, password)
+        start_time = time.time()
+        response = requests.get(url, timeout=10)
+        latency = (time.time() - start_time) * 1000  # 转换为毫秒
+        print(f"Proxy {proxy_ip}: -> {url}: HTTP Status Code: {response.status_code}, Latency: {latency:.2f} ms")
+        return latency
+    except RequestException as e:
+        print(f"Proxy {proxy_ip}: -> {url}: Error: {e}")
+        return None
 
 def batch_test_proxies(proxies, urls):
     failed_proxies = False  # 标志位，跟踪是否有失败的代理
