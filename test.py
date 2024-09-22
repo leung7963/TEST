@@ -13,18 +13,7 @@ def set_socks5_proxy(proxy_ip, proxy_port, username=None, password=None):
         socks.set_default_proxy(socks.SOCKS5, proxy_ip, proxy_port)
     socket.socket = socks.socksocket
 
-def test_socks5_latency(proxy, url):
-    proxy_ip, proxy_port, username, password = proxy
-    try:
-        set_socks5_proxy(proxy_ip, proxy_port, username, password)
-        start_time = time.time()
-        response = requests.get(url, timeout=10)
-        latency = (time.time() - start_time) * 1000  # 转换为毫秒
-        print(f"Proxy {proxy_ip}:{proxy_port} -> {url}: HTTP Status Code: {response.status_code}, Latency: {latency:.2f} ms")
-        return latency
-    except RequestException as e:
-        print(f"Proxy {proxy_ip}:{proxy_port} -> {url}: Error: {e}")
-        return None
+
 
 def trigger_github_action():
     # 清除全局代理设置，确保不使用代理
@@ -69,10 +58,10 @@ def batch_test_proxies(proxies, urls):
             proxy_ip, proxy_port = proxy[:2]  # 只获取IP和端口
             
             if latency is None:  # 如果代理连接失败
-                print(f"Proxy {proxy_ip}:{proxy_port} failed.")
+                print(f"Proxy {proxy_ip}: failed.")
                 failed_proxies = True  # 设置标志位为 True
             else:
-                print(f"Proxy {proxy_ip}:{proxy_port} -> {url} Latency: {latency:.2f} ms")
+                print(f"Proxy {proxy_ip} -> {url} Latency: {latency:.2f} ms")
     
     # 所有代理测试完成后，如果有失败项，触发 GitHub Action
     if failed_proxies:
@@ -99,7 +88,7 @@ def load_proxies_from_env():
 
 # 测试的URL列表
 urls = [
-    "http://www.apple.com/library/test/success.html"
+    "http://cp.cloudflare.com/"
 ]
 
 # 从环境变量中加载代理
